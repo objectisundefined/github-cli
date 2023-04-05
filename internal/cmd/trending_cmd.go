@@ -26,10 +26,10 @@ func NewTrendingCommand() *cobra.Command {
 
 func formatLanguage(lan string) string {
 	if len(lan) == 0 {
-		return ""
+		lan = "unknown"
 	}
 
-	return fmt.Sprintf("[%s] ", lan)
+	return Styles.Gray(fmt.Sprintf("[%s] ", lan))
 }
 
 func runTrendingCommandFunc(cmd *cobra.Command, args []string) {
@@ -47,6 +47,6 @@ func runTrendingCommandFunc(cmd *cobra.Command, args []string) {
 	}
 
 	for _, project := range projects {
-		fmt.Printf("%s%s %s\n", formatLanguage(project.Language), project.URL.String(), project.Description)
+		fmt.Printf("%s%s %s\n", formatLanguage(project.Language), Styles.BrightBlue(project.URL.String()), Styles.BrightYellow(project.Description))
 	}
 }

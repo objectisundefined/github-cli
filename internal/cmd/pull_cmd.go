@@ -30,7 +30,7 @@ func NewPullsCommand() *cobra.Command {
 	m.Flags().StringVar(&pullsSinceTime, "since", "", fmt.Sprintf("Issue Since Time, format is %s", TimeFormat))
 	m.Flags().StringVar(&pullsOffsetDur, "offset", "-48h", "The offset of since time")
 	m.Flags().StringVar(&pullsOwner, "owner", "", "The Github account")
-	m.Flags().StringVar(&pullsReviewers, "reviewers", "", "Request reivewers, separated by comma")
+	m.Flags().StringVar(&pullsReviewers, "reviewers", "", "Request reviewers, separated by comma")
 	return m
 }
 

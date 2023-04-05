@@ -16,7 +16,7 @@ type SearchOptions struct {
 	Limit int
 }
 
-// TimeFormat is the foramt for time output
+// TimeFormat is the format for time output
 const TimeFormat string = "2006-01-02T15:04:05"
 
 // RangeTime is a time range in [start, end]
@@ -94,7 +94,7 @@ func findRepo(c *config.Config, args []string) config.Repository {
 		return *repo
 	}
 
-	// use specail owner and repo
+	// use special owner and repo
 	return config.Repository{Owner: owner, Name: name}
 
 }
@@ -120,7 +120,7 @@ func filterRepo(c *config.Config, owner string, args []string) []config.Reposito
 		return []config.Repository{*r}
 	}
 
-	// use specail owner and repo
+	// use special owner and repo
 	return []config.Repository{
 		{Owner: owner, Name: name},
 	}
@@ -141,3 +141,25 @@ func filterUsers(users []*github.User, names []string) bool {
 
 	return false
 }
+
+type style struct{}
+
+func (_ *style) Black(s string) string         { return fmt.Sprintf("\u001b[30m%s\u001b[39m", s) }
+func (_ *style) Red(s string) string           { return fmt.Sprintf("\u001b[31m%s\u001b[39m", s) }
+func (_ *style) Green(s string) string         { return fmt.Sprintf("\u001b[32m%s\u001b[39m", s) }
+func (_ *style) Yellow(s string) string        { return fmt.Sprintf("\u001b[33m%s\u001b[39m", s) }
+func (_ *style) Blue(s string) string          { return fmt.Sprintf("\u001b[34m%s\u001b[39m", s) }
+func (_ *style) Magenta(s string) string       { return fmt.Sprintf("\u001b[35m%s\u001b[39m", s) }
+func (_ *style) Cyan(s string) string          { return fmt.Sprintf("\u001b[36m%s\u001b[39m", s) }
+func (_ *style) White(s string) string         { return fmt.Sprintf("\u001b[37m%s\u001b[39m", s) }
+func (_ *style) Gray(s string) string          { return fmt.Sprintf("\u001b[90m%s\u001b[39m", s) }
+func (_ *style) Grey(s string) string          { return fmt.Sprintf("\u001b[90m%s\u001b[39m", s) }
+func (_ *style) BrightRed(s string) string     { return fmt.Sprintf("\u001b[91m%s\u001b[39m", s) }
+func (_ *style) BrightGreen(s string) string   { return fmt.Sprintf("\u001b[92m%s\u001b[39m", s) }
+func (_ *style) BrightYellow(s string) string  { return fmt.Sprintf("\u001b[93m%s\u001b[39m", s) }
+func (_ *style) BrightBlue(s string) string    { return fmt.Sprintf("\u001b[94m%s\u001b[39m", s) }
+func (_ *style) BrightMagenta(s string) string { return fmt.Sprintf("\u001b[95m%s\u001b[39m", s) }
+func (_ *style) BrightCyan(s string) string    { return fmt.Sprintf("\u001b[96m%s\u001b[39m", s) }
+func (_ *style) BrightWhite(s string) string   { return fmt.Sprintf("\u001b[97m%s\u001b[39m", s) }
+
+var Styles style

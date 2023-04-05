@@ -8,7 +8,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"unicode"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -79,8 +78,8 @@ type Project struct {
 	// Description is the description of the repository like "JavaScript Style Guide" (for "airbnb/javascript").
 	Description string
 
-	// Language is the determined programing language of the project (by Github).
-	// Sometimes Language is an empty string, because Github can`t determine the (main) programing language (like for "google/deepdream").
+	// Language is the determined programming language of the project (by Github).
+	// Sometimes Language is an empty string, because Github can`t determine the (main) programming language (like for "google/deepdream").
 	Language string
 
 	// Stars is the number of github stars this project received in the given timeframe (see TimeToday / TimeWeek / TimeMonth constants).
@@ -95,12 +94,12 @@ type Project struct {
 
 	// Contributor are a collection of Developer.
 	// Be aware that this collection don`t covers all contributor.
-	// Only those who are mentioned at githubs trending page.
+	// Only those who are mentioned at github's trending page.
 	Contributor []Developer
 }
 
-// Language reflects a single (programing) language offered by github for filtering.
-// If you call "GetProjects" you are able to filter by programing language.
+// Language reflects a single (programming) language offered by github for filtering.
+// If you call "GetProjects" you are able to filter by programming language.
 // For filter input you should use the URLName of Language.
 type Language struct {
 	// Name is the human readable name of the language like "Go" or "Web Ontology Language"
@@ -162,7 +161,7 @@ func NewTrendingWithClient(client *http.Client) *Trending {
 // time can be filtered by applying by one of the Time* constants (e.g. TimeToday, TimeWeek, ...).
 // If an empty string will be applied TimeToday will be the default (current default by Github).
 //
-// language can be filtered by applying a programing language by your choice.
+// language can be filtered by applying a programming language by your choice.
 // The input must be a known language by Github and be part of GetLanguages().
 // Further more it must be the Language.URLName and not the human readable Language.Name.
 // If language is an empty string "All languages" will be applied (current default by Github).
@@ -193,22 +192,19 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 		name := t.getProjectName(s.Find(".h3 a").Text())
 
 		// Split name (like "andygrunwald/go-trending") into owner ("andygrunwald") and repository name ("go-trending"")
-		splittedName := strings.SplitAfterN(name, "/", 2)
-		owner := splittedName[0][:len(splittedName[0])-1]
+		splitName := strings.SplitAfterN(name, "/", 2)
+		owner := splitName[0][:len(splitName[0])-1]
 		owner = strings.TrimSpace(owner)
-		repositoryName := strings.TrimSpace(splittedName[1])
+		repositoryName := strings.TrimSpace(splitName[1])
 
 		address, exists := s.Find(".h3 a").First().Attr("href")
 		projectURL := t.appendBaseHostToPath("https://github.com"+address, exists)
 
-		description := s.Find(".col-9 .pr-4").Text()
+		description := s.Find(".col-9").Text()
 		description = strings.TrimSpace(description)
 
-		language := s.Find(".mr-3").Eq(0).Text()
+		language := s.Find(".f6 .ml-0").Text()
 		language = strings.TrimSpace(language)
-		if unicode.IsDigit(rune(language[0])) {
-			language = ""
-		}
 
 		starsString := s.Find(".Link--muted .octicon-star").Parent().Text()
 		starsString = strings.TrimSpace(starsString)
@@ -219,13 +215,13 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 			stars = 0
 		}
 
-		contributerSelection := s.Find("span.mr-3 a")
-		contributorPath, exists := contributerSelection.Attr("href")
+		contributorSelection := s.Find("span.mr-3 a")
+		contributorPath, exists := contributorSelection.Attr("href")
 		contributorURL := t.appendBaseHostToPath("https://github.com"+contributorPath, exists)
 
 		// Collect contributor
 		var developer []Developer
-		contributerSelection.Find("img").Each(func(j int, devSelection *goquery.Selection) {
+		contributorSelection.Find("img").Each(func(j int, devSelection *goquery.Selection) {
 			devName, exists := devSelection.Attr("alt")
 			linkURL := t.appendBaseHostToPath(devName, exists)
 
@@ -264,7 +260,7 @@ func (t *Trending) GetProjects(time, language string) ([]Project, error) {
 	return projects, nil
 }
 
-// GetLanguages will return a slice of Language known by gitub.
+// GetLanguages will return a slice of Language known by github.
 // With the Language.URLName you can filter your GetProjects / GetDevelopers calls.
 func (t *Trending) GetLanguages() ([]Language, error) {
 	return t.generateLanguages("#languages-menuitems a.select-menu-item")
@@ -333,7 +329,7 @@ func (t *Trending) generateLanguages(mainSelector string) ([]Language, error) {
 // time can be filtered by applying by one of the Time* constants (e.g. TimeToday, TimeWeek, ...).
 // If an empty string will be applied TimeToday will be the default (current default by Github).
 //
-// language can be filtered by applying a programing language by your choice
+// language can be filtered by applying a programming language by your choice
 // The input must be a known language by Github and be part of GetLanguages().
 // Further more it must be the Language.URLName and not the human readable Language.Name.
 // If language is an empty string "All languages" will be applied (current default by Github).
@@ -462,7 +458,7 @@ func (t *Trending) getProjectName(name string) string {
 
 // generateURL will generate the correct URL to call the github site.
 //
-// Depending on mode, time and language it will set the correct pathes and query parameters.
+// Depending on mode, time and language it will set the correct paths and query parameters.
 func (t *Trending) generateURL(mode, time, language string) (*url.URL, error) {
 	urlStr := urlTrendingPath
 	if mode == modeDevelopers {
